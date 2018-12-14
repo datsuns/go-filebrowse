@@ -1,16 +1,18 @@
 package main
 
-//WALK関連のライブラリ
 import (
 	"github.com/lxn/walk"
 	decl "github.com/lxn/walk/declarative"
 )
 
-//その他標準ライブラリ
 import (
 	"log"
 	"path/filepath"
 	"strings"
+)
+
+var (
+	DeaultPath = "C:\\"
 )
 
 func main() {
@@ -26,6 +28,7 @@ func main() {
 				Layout: decl.HBox{},
 				Children: []decl.Widget{
 					decl.LineEdit{
+						Text:     DeaultPath,
 						AssignTo: &mw.searchBox,
 					},
 					decl.PushButton{
