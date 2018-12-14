@@ -18,7 +18,7 @@ var (
 func main() {
 	mw := &MyMainWindow{}
 
-	if _, err := (decl.MainWindow{
+	win := decl.MainWindow{
 		AssignTo: &mw.MainWindow,
 		Title:    "SearchBox",
 		MinSize:  decl.Size{300, 400},
@@ -38,13 +38,20 @@ func main() {
 				},
 			},
 			decl.ListBox{
-				AssignTo: &mw.results,
-				Row:      5,
+				AssignTo:  &mw.listBox,
+				Row:       5,
+				OnKeyDown: mw.onKeyDown,
 			},
 		},
-	}.Run()); err != nil {
-		log.Fatal(err)
 	}
+	win.Create()
+	mw.listBox.KeyUp().Attach(func(key walk.Key) {
+		log.Printf("handler:%v\n", key)
+	})
+	//if _, err := (*win.AssignTo).Run(); err != nil {
+	//	log.Fatal(err)
+	//}
+	(*win.AssignTo).Run()
 
 }
 
@@ -52,19 +59,34 @@ func main() {
 type MyMainWindow struct {
 	*walk.MainWindow
 	searchBox *walk.LineEdit
-	results   *walk.ListBox
+	listBox   *walk.ListBox
+}
+
+func (mw *MyMainWindow) KeyEventHandler(key walk.Key) {
 }
 
 func (mw *MyMainWindow) clicked() {
 	word := mw.searchBox.Text()
 	flist, err := filepath.Glob(word + "/*")
 	if err != nil {
-		mw.results.SetModel(err.Error())
+		mw.listBox.SetModel(err.Error())
 	}
-	mw.results.SetModel(flist)
+	mw.listBox.SetModel(flist)
 }
 
-//textからwordを検索して、位置をUnicode単位で返す
+func (mw *MyMainWindow) onKeyDown(key walk.Key) {
+	log.Printf("%v\n", key)
+	switch key {
+	case walk.KeyK:
+		log.Printf("up!\n")
+		//mw.listBox.KeyUp().Publish(walk.KeyUp)
+	case walk.KeyJ:
+		log.Printf("down!\n")
+		//mw.listBox.KeyDown().Publish(walk.KeyDown)
+	}
+
+}
+
 func search(text, word string) (result []int) {
 	result = []int{}
 	i := 0

@@ -6,7 +6,8 @@ BIN   := filebrowse.exe
 default: build run
 
 build: $(FILES)
-	go build -ldflags="-H windowsgui" -o $(BIN)
+	@echo go build -ldflags="-H windowsgui" -o $(BIN)
+	go build  -o $(BIN)
 
 run:
 	./$(BIN)
